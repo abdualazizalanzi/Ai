@@ -40,7 +40,7 @@ def main():
     # يرد على أي رسالة مكتوبة في القروب
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply_message))
     # أمر /رد
-    app.add_handler(CommandHandler("رد", send_last))
+app.add_handler(CommandHandler("last", send_last))
 
     app.run_polling()
 
