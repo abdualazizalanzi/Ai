@@ -2,22 +2,21 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 import openai
 
-# ضع التوكن حق بوتك هنا
-TELEGRAM_TOKEN = "PUT_YOUR_TELEGRAM_TOKEN_HERE"
-OPENAI_API_KEY = "PUT_YOUR_OPENAI_KEY_HERE"
+# توكن البوت
+TELEGRAM_TOKEN = "8142897497:AAHkRSwKlJei4m42Ij9N1f7_OKcbl_vfWHA"
+
+# مفتاح OpenAI
+OPENAI_API_KEY = "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"
 
 openai.api_key = OPENAI_API_KEY
 
-# نخزن آخر رسالة
 last_question = ""
 
-# دالة الرد على الرسائل
 async def reply_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global last_question
     user_message = update.message.text
     last_question = user_message
 
-    # نرسلها للذكاء الاصطناعي
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": user_message}]
@@ -26,21 +25,20 @@ async def reply_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ai_reply = response["choices"][0]["message"]["content"]
     await update.message.reply_text(ai_reply)
 
-# أمر /رد يرسل آخر سؤال
 async def send_last(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global last_question
     if last_question:
-        await update.message.reply_text(f"آخر سؤال كان:\n{last_question}")
+        await update.message.reply_text(f"Last question was:\n{last_question}")
     else:
-        await update.message.reply_text("ما فيه أي سؤال محفوظ للحين.")
+        await update.message.reply_text("No question has been sent yet.")
 
 def main():
     app = Application.builder().token(TELEGRAM_TOKEN).build()
 
-    # يرد على أي رسالة مكتوبة في القروب
+    # الرد على أي رسالة
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply_message))
-    # أمر /رد
-app.add_handler(CommandHandler("last", send_last))
+    # أمر /last
+    app.add_handler(CommandHandler("last", send_last))
 
     app.run_polling()
 
